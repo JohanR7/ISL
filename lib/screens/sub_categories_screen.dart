@@ -113,12 +113,6 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
                         },
                       ),
                     ),
-                    if (_lastSelectedSubCategoryJson != null)
-                      buildJsonResponsePanel( // Use the global helper
-                        context,
-                        'API: LocalAPI.getSubCategoryByName(...) called for:',
-                        _lastSelectedSubCategoryJson!,
-                      ),
                   ],
                 ),
     );

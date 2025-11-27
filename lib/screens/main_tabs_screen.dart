@@ -118,12 +118,6 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
                         },
                       ),
                     ),
-                    if (_lastSelectedMainTabJson != null)
-                      buildJsonResponsePanel( // Use the global helper
-                        context,
-                        'API: LocalAPI.getMainTabById(...) called for:',
-                        _lastSelectedMainTabJson!,
-                      ),
                   ],
                 ),
     );

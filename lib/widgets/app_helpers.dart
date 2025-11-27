@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '/models/category_model.dart'; // Adjust path
@@ -94,7 +92,10 @@ Map<String, dynamic> toPrettyJson(Object? obj) {
       'youtubeVideoId': obj.youtubeVideoId,
     };
   }
-  return {'_objectType': obj.runtimeType.toString(), '_details': obj.toString()};
+  return {
+    '_objectType': obj.runtimeType.toString(),
+    '_details': obj.toString(),
+  };
 }
 
 Future<void> showVideoOverlay({
@@ -128,7 +129,8 @@ Future<void> showVideoOverlay({
     isDismissible: allowDismiss,
     enableDrag: allowDismiss,
     builder: (context) {
-      return WillPopScope( // Use WillPopScope instead of PopScope
+      return WillPopScope(
+        // Use WillPopScope instead of PopScope
         onWillPop: () async {
           if (controller != null) {
             controller.pause();
@@ -199,33 +201,7 @@ Future<void> showVideoOverlay({
                             style: Theme.of(context).textTheme.headlineSmall,
                             textAlign: TextAlign.center,
                           ),
-                          if (jsonResponse != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: ExpansionTile(
-                                title: const Text('API JSON Response', style: TextStyle(fontSize: 14)),
-                                children: [
-                                  ConstrainedBox(
-                                    constraints: const BoxConstraints(maxHeight: 200),
-                                    child: SingleChildScrollView(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[100],
-                                          borderRadius: BorderRadius.circular(5),
-                                        ),
-                                        child: Text(
-                                          const JsonEncoder.withIndent('  ').convert(toPrettyJson(jsonResponse)),
-                                          style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 24),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -240,31 +216,42 @@ Future<void> showVideoOverlay({
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue,
                                     foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: const Text('Enter', style: TextStyle(fontSize: 16)),
+                                  child: const Text(
+                                    'Enter',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: OutlinedButton(
-                                  onPressed: allowDismiss
-                                      ? () {
-                                          Navigator.pop(context);
-                                        }
-                                      : null,
+                                  onPressed: () {
+                                    if (controller != null) {
+                                      controller.pause();
+                                    }
+                                    Navigator.pop(context);
+                                  },
                                   style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.blue,
-                                    side: const BorderSide(color: Colors.blue),
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    foregroundColor: Colors.red, 
+                                    side: const BorderSide(color: Colors.red, width: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: const Text('X', style: TextStyle(fontSize: 16)),
+                                  child: const Text(
+                                    'Close',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
                                 ),
                               ),
                             ],
@@ -358,7 +345,7 @@ class CategoryGridTile extends StatelessWidget {
                       child: CircularProgressIndicator(
                         value: loadingProgress.expectedTotalBytes != null
                             ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
+                                  loadingProgress.expectedTotalBytes!
                             : null,
                       ),
                     ),
@@ -402,37 +389,4 @@ class CategoryGridTile extends StatelessWidget {
       child: Icon(Icons.category, size: 48, color: Colors.deepPurple.shade400),
     );
   }
-}
-
-// Global helper to display JSON response
-Widget buildJsonResponsePanel(BuildContext context, String apiCallInfo, Object obj) {
-  return Container(
-    width: double.infinity,
-    padding: const EdgeInsets.all(16.0),
-    color: Colors.grey[50],
-    child: ExpansionTile(
-      title: Text(apiCallInfo, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-      initiallyExpanded: false,
-      children: [
-        ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 200), // Limit height
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                const JsonEncoder.withIndent('  ').convert(toPrettyJson(obj)),
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
 }

@@ -21,9 +21,13 @@ Widget buildWordsOnlyContent(BuildContext context, WordsOnlySubTab subTab) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text('Words in "${subTab.name ?? 'Words Only'}":',
-          style: Theme.of(context).textTheme.titleMedium),
-      const SizedBox(height: 10),
+      Text(
+        '${subTab.name ?? 'Words Only'}:',
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+        fontSize: 20, 
+        ),
+      ),
+      const SizedBox(height: 20),
       GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),

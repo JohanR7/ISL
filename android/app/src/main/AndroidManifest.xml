@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="olabs"
+        android:label="Indian Sign Lanugage"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

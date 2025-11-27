@@ -37,34 +37,39 @@ class _MainCategoriesScreenState extends State<MainCategoriesScreen> {
     super.initState();
     _fetchMainCategories();
   }
-
-  Future<void> _fetchMainCategories() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = '';
-    });
-    try {
-      _mainCategories = await LocalAPI.getAllMainCategories();
-      debugPrint('API Call: getAllMainCategories() successful.');
-      
-      // Debug: Print all category names
-      debugPrint('=== CATEGORY NAMES FROM API ===');
-      for (var category in _mainCategories) {
-        debugPrint('Category: "${category.name}"');
-        final imagePath = _getImageForCategory(category.name);
-        debugPrint('  -> Image path: ${imagePath ?? "NOT FOUND"}');
-      }
-      debugPrint('=== END CATEGORY NAMES ===');
-      
-    } catch (e) {
-      _errorMessage = 'Error loading main categories: ${e.toString()}';
-      debugPrint('API Call Error: $_errorMessage');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+Future<void> _fetchMainCategories() async {
+  setState(() {
+    _isLoading = true;
+    _errorMessage = '';
+  });
+  try {
+    final allCategories = await LocalAPI.getAllMainCategories();
+    
+    // Filter out "Dictionary" category
+    _mainCategories = allCategories
+        .where((category) => category.name?.toLowerCase() != 'dictionary')
+        .toList();
+    
+    debugPrint('API Call: getAllMainCategories() successful.');
+    
+    // Debug: Print all category names
+    debugPrint('=== CATEGORY NAMES FROM API ===');
+    for (var category in _mainCategories) {
+      debugPrint('Category: "${category.name}"');
+      final imagePath = _getImageForCategory(category.name);
+      debugPrint('  -> Image path: ${imagePath ?? "NOT FOUND"}');
     }
+    debugPrint('=== END CATEGORY NAMES ===');
+    
+  } catch (e) {
+    _errorMessage = 'Error loading main categories: ${e.toString()}';
+    debugPrint('API Call Error: $_errorMessage');
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
 
   // Get the image path for a category, returns null if not found
   String? _getImageForCategory(String? categoryName) {
@@ -155,12 +160,6 @@ class _MainCategoriesScreenState extends State<MainCategoriesScreen> {
                         },
                       ),
                     ),
-                    if (_lastSelectedCategoryJson != null)
-                      buildJsonResponsePanel( // Use the global helper
-                        context,
-                        'API: LocalAPI.getMainCategoryByName(...) called for:',
-                        _lastSelectedCategoryJson!,
-                      ),
                   ],
                 ),
     );

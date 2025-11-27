@@ -200,50 +200,26 @@ class _SubTabContentScreenState extends State<SubTabContentScreen> {
     return 'Unknown/No Sub-Tab Selected';
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.mainTabId)),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage.isNotEmpty
-              ? Center(child: Text(_errorMessage, style: const TextStyle(color: Colors.red)))
-              : Column(
-                  children: [
-                    // Horizontal list of sub-tabs
-                    _buildSubTabSelector(),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Content for Main Tab: ${widget.mainTabId}',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Currently showing: ${_getActualSubTabTypeName(_selectedSubTabContent)}',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.deepPurple),
-                            ),
-                            const SizedBox(height: 20),
-                            // Render content based on the type of _selectedSubTabContent
-                            _buildSubTabContent(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    if (_lastApiCallJson != null)
-                      buildJsonResponsePanel( // Use global helper
-                        context,
-                        'API response for selected sub-tab content:',
-                        _lastApiCallJson!,
-                      ),
-                  ],
-                ),
-    );
-  }
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text(widget.mainTabId)),
+    body: _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : _errorMessage.isNotEmpty
+            ? Center(child: Text(_errorMessage, style: const TextStyle(color: Colors.red)))
+            : Column(
+                children: [
+                  // Horizontal list of sub-tabs
+                  _buildSubTabSelector(),
+                  // Content area - handle SentenceMakingSubTab differently
+                  Expanded(
+                    child: _buildSubTabContent(),
+                  ),
+                ],
+              ),
+  );
+}
 
   Widget _buildSubTabSelector() {
     return Container(
@@ -273,37 +249,52 @@ class _SubTabContentScreenState extends State<SubTabContentScreen> {
     );
   }
 
-  Widget _buildSubTabContent() {
-    if (_selectedSubTabContent is WordsOnlySubTab) {
-      return buildWordsOnlyContent(context, _selectedSubTabContent as WordsOnlySubTab);
-    } else if (_selectedSubTabContent is SentenceMakingSubTab) {
-      // Pass down the necessary state and callbacks for the game
-      return buildSentenceMakingGame(
-        context: context, // Explicitly pass context
-        subTab: _selectedSubTabContent as SentenceMakingSubTab,
-        selectedActivity: _selectedActivity,
-        availableGameWords: _availableGameWords,
-        chosenSentenceWords: _chosenSentenceWords,
-        gameMessage: _gameMessage,
-        onActivitySelected: (activity) {
-          setState(() {
-            _selectedActivity = activity;
-            _availableGameWords = activity?.words ?? [];
-            _chosenSentenceWords.clear();
-            _gameMessage = '';
-          });
-        },
-        onAddWord: _addWordToSentence,
-        onRemoveWord: _removeWordFromSentence,
-        onCheckSentence: _checkSentence,
-      );
-    } else if (_selectedSubTabContent is SentenceOnlySubTab) {
-      return buildSentenceOnlyContent(context, _selectedSubTabContent as SentenceOnlySubTab);
-    } else if (_selectedSubTabContent is AssessmentSubTab) {
-      return buildAssessmentContent(context, _selectedSubTabContent as AssessmentSubTab);
-    } else if (_selectedSubTabContent is GenericSubTab) {
-      return buildGenericContent(context, _selectedSubTabContent as GenericSubTab);
-    }
-    return const Text('Select a sub-tab to view its content.', style: TextStyle(fontStyle: FontStyle.italic));
+Widget _buildSubTabContent() {
+  if (_selectedSubTabContent is WordsOnlySubTab) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: buildWordsOnlyContent(context, _selectedSubTabContent as WordsOnlySubTab),
+    );
+  } else if (_selectedSubTabContent is SentenceMakingSubTab) {
+    // SentenceMakingSubTab handles its own scrolling internally
+    // Don't wrap it in SingleChildScrollView
+    return buildSentenceMakingGame(
+      context: context,
+      subTab: _selectedSubTabContent as SentenceMakingSubTab,
+      selectedActivity: _selectedActivity,
+      availableGameWords: _availableGameWords,
+      chosenSentenceWords: _chosenSentenceWords,
+      gameMessage: _gameMessage,
+      onActivitySelected: (activity) {
+        setState(() {
+          _selectedActivity = activity;
+          _availableGameWords = activity?.words ?? [];
+          _chosenSentenceWords.clear();
+          _gameMessage = '';
+        });
+      },
+      onAddWord: _addWordToSentence,
+      onRemoveWord: _removeWordFromSentence,
+      onCheckSentence: _checkSentence,
+    );
+  } else if (_selectedSubTabContent is SentenceOnlySubTab) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: buildSentenceOnlyContent(context, _selectedSubTabContent as SentenceOnlySubTab),
+    );
+  } else if (_selectedSubTabContent is AssessmentSubTab) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: buildAssessmentContent(context, _selectedSubTabContent as AssessmentSubTab),
+    );
+  } else if (_selectedSubTabContent is GenericSubTab) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: buildGenericContent(context, _selectedSubTabContent as GenericSubTab),
+    );
   }
+  return const Center(
+    child: Text('Select a sub-tab to view its content.', style: TextStyle(fontStyle: FontStyle.italic)),
+  );
+}
 }
