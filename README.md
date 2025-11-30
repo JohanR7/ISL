@@ -1,16 +1,36 @@
-# olabs
+# Flutter Project Setup
 
-A new Flutter project.
+## Prerequisites
+- Flutter SDK installed ([flutter.dev](https://flutter.dev))
+- Android Studio / VS Code with Flutter extensions
+- Android/iOS emulator or physical device
 
-## Getting Started
+## Setup & Run
 
-This project is a starting point for a Flutter application.
+1. **Clone the repository**
+```bash
+   git clone https://github.com/JohanR7/ISL.git
+   cd ISL
+```
 
-A few resources to get you started if this is your first Flutter project:
+2. **Install dependencies**
+```bash
+   flutter pub get
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+3. **Run the app**
+```bash
+   flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Common Commands
+- `flutter doctor` - Check Flutter installation
+- `flutter devices` - List connected devices
+- `flutter clean` - Clean build files
+- `flutter build apk` - Build Android APK
+- `flutter build ios` - Build iOS app
+
+## Troubleshooting
+- If build fails, run `flutter clean` then `flutter pub get`
+- Ensure a device is connected or emulator is running
+- Check `flutter doctor` for missing dependencies
