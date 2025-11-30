@@ -24,7 +24,6 @@ flutter:
 
   # Add your assets here
   assets:
-    -  assets/data/data.json
     -  assets/images/
 
   
